@@ -1,8 +1,8 @@
 import os
 from functools import partial
 
-from rm_binance_data_downloader.src.csvs_to_parquet import csv_to_partitioned_parquet
-from rm_binance_data_downloader.src.files_parser import _is_filename_in_date_range
+from src.rm_bdd.csvs_to_parquet import csv_to_partitioned_parquet
+from src.rm_bdd.files_parser import _is_filename_in_date_range
 
 
 class DataFormatter:
@@ -49,7 +49,7 @@ class DataFormatter:
 
 if __name__ == '__main__':
     def main():
-        from rm_binance_data_downloader.src.binance_metadata_manager import BinanceMetadataManager
+        from src.rm_bdd.binance_metadata_manager import BinanceMetadataManager
         formatter = DataFormatter("extracts/", "data/", BinanceMetadataManager("data/metadata.json"))
         formatter.format("BTCUSDT", '1m')
 

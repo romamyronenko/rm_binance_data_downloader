@@ -3,8 +3,8 @@ from functools import partial
 
 import zipfile
 
-from rm_binance_data_downloader.src.binance_metadata_manager import BinanceMetadataManager
-from rm_binance_data_downloader.src.files_parser import _is_filename_in_date_range
+from src.rm_bdd.binance_metadata_manager import BinanceMetadataManager
+from src.rm_bdd.files_parser import _is_filename_in_date_range
 
 
 class DataExtractor:

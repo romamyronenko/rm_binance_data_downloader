@@ -1,4 +1,4 @@
-from rm_binance_data_downloader.src.metadata_manager import MetadataManager
+from src.rm_bdd.metadata_manager import MetadataManager
 
 
 def _get_data_from_filename(filename) -> tuple[str, str, str]:

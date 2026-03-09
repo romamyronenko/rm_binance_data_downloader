@@ -23,10 +23,10 @@ class DataManager:
 
 if __name__ == '__main__':
     import asyncio
-    from rm_binance_data_downloader.src.data_downloader import DataDownloader
-    from rm_binance_data_downloader.src.data_extractor import DataExtractor
-    from rm_binance_data_downloader.src.data_formatter import DataFormatter
-    from rm_binance_data_downloader.src.binance_metadata_manager import BinanceMetadataManager
+    from src.rm_bdd.data_downloader import DataDownloader
+    from src.rm_bdd.data_extractor import DataExtractor
+    from src.rm_bdd.data_formatter import DataFormatter
+    from src.rm_bdd.binance_metadata_manager import BinanceMetadataManager
 
     downloader = DataDownloader("downloads/", BinanceMetadataManager("downloads/metadata.json"))
     extractor = DataExtractor("downloads/", "extracts/", BinanceMetadataManager("extracts/metadata.json"))
