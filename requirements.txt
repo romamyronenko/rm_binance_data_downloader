@@ -1,0 +1,4 @@
+aiohttp==3.13.3
+pyarrow==23.0.1
+pandas==3.0.1
+xmltodict==1.0.4
