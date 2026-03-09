@@ -1,4 +1,4 @@
-from src.rm_bdd.metadata_manager import MetadataManager
+from .metadata_manager import MetadataManager
 
 
 def _get_data_from_filename(filename) -> tuple[str, str, str]:

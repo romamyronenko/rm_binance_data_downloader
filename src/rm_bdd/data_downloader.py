@@ -4,8 +4,8 @@ import os
 
 import aiohttp
 
-from src.rm_bdd.binance_metadata_manager import BinanceMetadataManager
-from src.rm_bdd.files_parser import get_all_available_filenames_in_daterange
+from .binance_metadata_manager import BinanceMetadataManager
+from .files_parser import get_all_available_filenames_in_daterange
 
 logger = logging.getLogger(__name__)
 BASE_VISION_URL = "https://data.binance.vision/"
