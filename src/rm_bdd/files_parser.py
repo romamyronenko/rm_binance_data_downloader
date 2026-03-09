@@ -3,8 +3,8 @@ import datetime
 import re
 from functools import partial
 
-from src.rm_bdd.binance_metadata_manager import _get_data_from_filename
-from src.rm_bdd.path_loader import get_all_path_responses
+from .binance_metadata_manager import _get_data_from_filename
+from .path_loader import get_all_path_responses
 
 DAY_DATE_REGEX = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 async def _get_all_available_filenames(symbol, timeframe) -> list[str]:
