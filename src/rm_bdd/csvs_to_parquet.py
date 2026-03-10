@@ -61,6 +61,4 @@ async def csv_to_partitioned_parquet(files, symbol, timeframe, path="data"):
     df["day"] = pd.to_datetime(df["open_time"], unit="ms", utc=True).dt.day
     df["symbol"] = symbol
     df["timeframe"] = timeframe
-    df.to_parquet(path, partition_cols=["symbol", "timeframe", "year", "month", "day"])
-
-
+    df.to_parquet(path, partition_cols=["symbol", "timeframe", "year", "month", "day"], max_partitions=5000, )
