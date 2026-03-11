@@ -5,9 +5,9 @@ Binance market data.
 
 The package provides a pipeline that:
 
-1.  Downloads data from Binance Vision
-2.  Extracts compressed archives
-3.  Formats data into a structured dataset
+1. Downloads data from Binance Vision
+2. Extracts compressed archives
+3. Formats data into a structured dataset
 
 It is designed for fast data preparation for quantitative trading,
 backtesting and data analysis.
@@ -24,12 +24,12 @@ pip install rm-bdd
 
 # Features
 
--   Download historical Binance data
--   Automatic archive extraction
--   Data formatting pipeline
--   Metadata management
--   Async architecture
--   Easy integration into trading systems
+- Download historical Binance data
+- Automatic archive extraction
+- Data formatting pipeline
+- Metadata management
+- Async architecture
+- Easy integration into trading systems
 
 ------------------------------------------------------------------------
 
@@ -39,80 +39,29 @@ pip install rm-bdd
 import asyncio
 import time
 
-from rm_bdd.data_downloader import DataDownloader
-from rm_bdd.data_extractor import DataExtractor
-from rm_bdd.data_formatter import DataFormatter
-from rm_bdd.binance_metadata_manager import BinanceMetadataManager
-
-
-class DataManager:
-
-    def __init__(self, downloader, extractor, formatter):
-        self._downloader = downloader
-        self._extractor = extractor
-        self._formatter = formatter
-
-    async def download_and_save(self, symbol, timeframe, date_from=None, date_to=None):
-
-        start = time.time()
-        await self._downloader.download(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("download time:", time.time() - start)
-
-        start = time.time()
-        await self._extractor.extract(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("extract time:", time.time() - start)
-
-        start = time.time()
-        await self._formatter.format(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("format time:", time.time() - start)
+from rm_bdd import get_manager
 
 
 async def main():
-
-    downloader = DataDownloader(
-        "downloads/",
-        BinanceMetadataManager("downloads/metadata.json")
-    )
-
-    extractor = DataExtractor(
-        "downloads/",
-        "extracts/",
-        BinanceMetadataManager("extracts/metadata.json")
-    )
-
-    formatter = DataFormatter(
-        "extracts/",
-        "data/",
-        BinanceMetadataManager("data/metadata.json")
-    )
-
-    manager = DataManager(downloader, extractor, formatter)
-
+    downloads_path = "downloads/"
+    extracts_path = "extracts/"
+    data_path = "data/"
+    
+    manager = get_manager(downloads_path, extracts_path, data_path)
     await manager.download_and_save("BTCUSDT", "1m")
 
 
 asyncio.run(main())
 ```
 
-------------------------------------------------------------------------
+Read data
 
-# Result Folder Structure
+``` python
+import pandas as pd
 
-After execution the folders will look like:
+df_1m = pd.read_parquet("data", filters=[("symbol", "==", "SOLUSDT"), ("timeframe", "==", "1m")])
+```
 
-    downloads/
-        BTCUSDT/
-        metadata.json
-
-    extracts/
-        BTCUSDT/
-        metadata.json
-
-    data/
-        BTCUSDT/
-        metadata.json
-
-------------------------------------------------------------------------
 
 # Pipeline Overview
 
@@ -149,10 +98,10 @@ Typical workflow:
 
 Used for:
 
--   algorithmic trading
--   backtesting
--   machine learning datasets
--   market research
+- algorithmic trading
+- backtesting
+- machine learning datasets
+- market research
 
 ------------------------------------------------------------------------
 
