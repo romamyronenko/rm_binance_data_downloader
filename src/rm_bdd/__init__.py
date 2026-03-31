@@ -17,6 +17,6 @@ def get_manager(download_folder="downloads/", extract_folder="extracts/", data_f
     formatter = data_formatter.DataFormatter(
         extract_folder,
         data_folder,
-        binance_metadata_manager.BinanceMetadataManager(os.path.join(data_folder, "metadata.json")),
+        binance_metadata_manager.BinanceMetadataManager(os.path.join(data_folder, "_metadata.json")),
     )
     return data_manager.DataManager(downloader, extractor, formatter)
