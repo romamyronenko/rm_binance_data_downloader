@@ -1,4 +1,7 @@
+import logging
 import time
+
+logger = logging.getLogger(__name__)
 
 
 class DataManager:
@@ -10,15 +13,15 @@ class DataManager:
     async def download_and_save(self, symbol, timeframe, date_from=None, date_to=None):
         start = time.time()
         await self._downloader.download(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("download time: ", time.time() - start)
+        logger.info(f"Download stage finished in {time.time() - start:.2f}s")
 
         start = time.time()
         await self._extractor.extract(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("extract time: ", time.time() - start)
+        logger.info(f"Extract stage finished in {time.time() - start:.2f}s")
 
         start = time.time()
         await self._formatter.format(symbol, timeframe, date_from=date_from, date_to=date_to)
-        print("format time: ", time.time() - start)
+        logger.info(f"Format stage finished in {time.time() - start:.2f}s")
 
 
 if __name__ == '__main__':

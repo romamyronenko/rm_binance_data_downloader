@@ -1,8 +1,11 @@
+import logging
 import os
 from functools import partial
 
 from .csvs_to_parquet import csv_to_partitioned_parquet
 from .files_parser import _is_filename_in_date_range
+
+logger = logging.getLogger(__name__)
 
 
 class DataFormatter:
@@ -27,14 +30,18 @@ class DataFormatter:
 
         filenames = list(
             filter(lambda a: a.count("-") == 1 or f'{a.rsplit("-", 1)[0]}.csv' not in filenames, filenames))
+
+        if not filenames:
+            return []
+
         retval = []
         symbol = filenames[0].rsplit("/", 1)[-1].split("-", 1)[0]
         timeframe = filenames[0].rsplit("/", 1)[-1].split("-", 2)[1]
         filenames = list(
             filter(self._metadata_manager.check, filenames)
         )
-        print("files to format: ", filenames)
         if filenames:
+            logger.debug(f"Files to format: {filenames}")
             await csv_to_partitioned_parquet(filenames, symbol, timeframe, self._data_folder)
 
             for filename in filenames:

@@ -1,3 +1,4 @@
+import logging
 import os
 from functools import partial
 
@@ -5,6 +6,8 @@ import zipfile
 
 from .binance_metadata_manager import BinanceMetadataManager
 from .files_parser import _is_filename_in_date_range
+
+logger = logging.getLogger(__name__)
 
 
 class DataExtractor:
@@ -20,8 +23,9 @@ class DataExtractor:
             partial(_is_filename_in_date_range, date_from=date_from, date_to=date_to),
             files_to_extract,
         ))
+        logger.info(f"Extracting {timeframe} data for {symbol} from {date_from} to {date_to}")
         retval = await self.extract_files(files_to_extract)
-
+        logger.info(f"Extracted {len(retval)} files for {symbol}")
         return retval
 
     async def extract_files(self, filenames):
@@ -32,6 +36,7 @@ class DataExtractor:
         filenames = list(filter(lambda a: a.count("-") == 1 or f'{a.rsplit("-", 1)[0]}.zip' not in filenames, filenames))
         retval = []
         for filename in filenames:
+            logger.debug(f"Extracting {filename}")
             with zipfile.ZipFile(filename) as zip_file:
                 zip_file.extractall(self._extract_folder)
             self._metadata_manager.update(filename)
