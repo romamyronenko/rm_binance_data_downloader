@@ -4,7 +4,6 @@ from functools import partial
 
 import zipfile
 
-from .binance_metadata_manager import BinanceMetadataManager
 from .files_parser import _is_filename_in_date_range
 
 logger = logging.getLogger(__name__)
@@ -29,11 +28,10 @@ class DataExtractor:
         return retval
 
     async def extract_files(self, filenames):
-        filenames = [self._download_folder + filename for filename in filenames]
-        filenames = list(
-            filter(self._metadata_manager.check, filenames)
-        )
-        filenames = list(filter(lambda a: a.count("-") == 1 or f'{a.rsplit("-", 1)[0]}.zip' not in filenames, filenames))
+        filenames = [os.path.join(self._download_folder, f) for f in filenames]
+        filenames = list(filter(self._metadata_manager.check, filenames))
+        # skip daily files when the corresponding monthly file is already present
+        filenames = [f for f in filenames if f'{f.rsplit("-", 1)[0]}.zip' not in filenames]
         retval = []
         for filename in filenames:
             logger.debug(f"Extracting {filename}")
@@ -45,16 +43,17 @@ class DataExtractor:
 
     @property
     def _downloaded_files(self) -> list[str]:
-        return list(filter(lambda a: a.endswith(".zip"), os.listdir(self._download_folder)))
+        if not os.path.isdir(self._download_folder):
+            return []
+        return [f for f in os.listdir(self._download_folder) if f.endswith(".zip")]
 
 
 if __name__ == '__main__':
     import asyncio
-
+    from .binance_metadata_manager import BinanceMetadataManager
 
     async def main():
         extractor = DataExtractor("downloads/", "extracts/", BinanceMetadataManager("extracts/metadata.json"))
         await extractor.extract("BTCUSDT", '1m')
-
 
     asyncio.run(main())

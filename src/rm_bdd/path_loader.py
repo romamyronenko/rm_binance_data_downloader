@@ -4,7 +4,7 @@ import aiohttp
 import xmltodict
 
 URL_TEMPLATE = "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision"
-SEMAPHORE = asyncio.Semaphore(300)
+SEMAPHORE = asyncio.Semaphore(30)
 
 
 async def get_all_paths(prefix: str, delimiter="/"):

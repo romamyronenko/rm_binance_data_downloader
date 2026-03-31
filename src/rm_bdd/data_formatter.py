@@ -26,39 +26,39 @@ class DataFormatter:
 
     async def format_files(self, filenames):
         os.makedirs(self._data_folder, exist_ok=True)
-        filenames = [self._extract_folder + filename for filename in filenames]
-
-        filenames = list(
-            filter(lambda a: a.count("-") == 1 or f'{a.rsplit("-", 1)[0]}.csv' not in filenames, filenames))
+        filenames = [os.path.join(self._extract_folder, f) for f in filenames]
+        # skip daily files when the corresponding monthly file is already present
+        filenames = [f for f in filenames if f'{f.rsplit("-", 1)[0]}.csv' not in filenames]
 
         if not filenames:
             return []
 
-        retval = []
-        symbol = filenames[0].rsplit("/", 1)[-1].split("-", 1)[0]
-        timeframe = filenames[0].rsplit("/", 1)[-1].split("-", 2)[1]
-        filenames = list(
-            filter(self._metadata_manager.check, filenames)
-        )
+        symbol = os.path.basename(filenames[0]).split("-", 1)[0]
+        timeframe = os.path.basename(filenames[0]).split("-", 2)[1]
+        filenames = list(filter(self._metadata_manager.check, filenames))
+
         if filenames:
             logger.debug(f"Files to format: {filenames}")
             await csv_to_partitioned_parquet(filenames, symbol, timeframe, self._data_folder)
 
             for filename in filenames:
                 self._metadata_manager.update(filename)
-                retval.append(filename)
-        return retval
+
+        return filenames
 
     @property
     def _extracted_files(self) -> list[str]:
-        return list(filter(lambda a: a.endswith(".csv"), os.listdir(self._extract_folder)))
+        if not os.path.isdir(self._extract_folder):
+            return []
+        return [f for f in os.listdir(self._extract_folder) if f.endswith(".csv")]
 
 
 if __name__ == '__main__':
-    def main():
-        from .binance_metadata_manager import BinanceMetadataManager
+    import asyncio
+    from .binance_metadata_manager import BinanceMetadataManager
+
+    async def main():
         formatter = DataFormatter("extracts/", "data/", BinanceMetadataManager("data/metadata.json"))
-        formatter.format("BTCUSDT", '1m')
+        await formatter.format("BTCUSDT", '1m')
 
-
-    main()
+    asyncio.run(main())

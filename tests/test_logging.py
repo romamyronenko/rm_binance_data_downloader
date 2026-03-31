@@ -83,12 +83,11 @@ class TestDataDownloaderLogging:
 
     async def test_logs_downloaded_file(self, tmp_path, caplog):
         url_key = "data/spot/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2024-01.zip"
+        mock_session = MagicMock()
+        mock_session.get.side_effect = Exception("network disabled")
 
-        with patch("rm_bdd.data_downloader.aiohttp.ClientSession") as mock_cls:
-            mock_cls.return_value.__aenter__.side_effect = Exception("network disabled")
-
-            with caplog.at_level(logging.INFO, logger="rm_bdd.data_downloader"):
-                result = await download_file(url_key, str(tmp_path) + "/")
+        with caplog.at_level(logging.INFO, logger="rm_bdd.data_downloader"):
+            result = await download_file(url_key, str(tmp_path) + "/", mock_session)
 
         assert result is None
         assert any("Failed" in r.message and "BTCUSDT-1m-2024-01" in r.message for r in caplog.records)
